@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { addDoc } from "firebase/firestore";
 import { todosCollection } from "../firebase";
-
+import "../styles/ToDoForm.css";
+import TodoList from "./ToDoList";
 function TodoForm() {
   const [task, setTask] = useState("");
 
@@ -14,14 +15,15 @@ function TodoForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="todo-form">
       <input
         type="text"
         value={task}
         onChange={(e) => setTask(e.target.value)}
-        placeholder="Add a new task"
+        placeholder="Add a new task..."
+        className="todo-input"
       />
-      <button type="submit">Add</button>
+      <button type="submit" className="add-btn">➕ Add</button>
     </form>
   );
 }
