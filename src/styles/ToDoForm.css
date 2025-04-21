@@ -1,0 +1,59 @@
+/* src/styles/TodoForm.css */
+.todo-form {
+  margin-bottom: 30px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.todo-form h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  font-size: 1.25rem;
+  color: #343a40;
+}
+
+.todo-form form {
+  display: flex;
+  gap: 10px;
+}
+
+.todo-form input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.todo-form button {
+  padding: 12px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.todo-form button:hover {
+  background-color: #218838;
+}
+
+.todo-form button:disabled {
+  background-color: #6c757d;
+  cursor: not-allowed;
+}
+
+@media (max-width: 576px) {
+  .todo-form form {
+    flex-direction: column;
+  }
+  
+  .todo-form input,
+  .todo-form button {
+    width: 100%;
+  }
+}
