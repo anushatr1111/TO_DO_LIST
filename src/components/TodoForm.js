@@ -1,101 +1,81 @@
-// src/components/TodoList.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { db } from '../firebase';
-import { 
-  collection, 
-  query, 
-  where, 
-  orderBy, 
-  onSnapshot,
-  doc,
-  updateDoc,
-  deleteDoc
-} from 'firebase/firestore';
-import '../styles/TodoList.css';
+import { collection, addDoc, serverTimestamp, doc, updateDoc } from 'firebase/firestore';
+import '../styles/TodoForm.css';
 
-function TodoList({ user }) {
-  const [tasks, setTasks] = useState([]);
-  const [loading, setLoading] = useState(true);
+function TodoForm({ user, editingTask, setEditingTask }) {
+  const [task, setTask] = useState(editingTask?.task || '');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  useEffect(() => {
-    const q = query(
-      collection(db, 'tasks'),
-      where('userId', '==', user.uid),
-      orderBy('createdAt', 'desc')
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const tasksList = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setTasks(tasksList);
-      setLoading(false);
-    }, (error) => {
-      console.error('Error fetching tasks:', error);
-      setLoading(false);
-    });
-
-    return () => unsubscribe();
-  }, [user.uid]);
-
-  const toggleComplete = async (taskId, currentStatus) => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!task.trim()) return;
+    
+    setIsSubmitting(true);
+    
     try {
-      await updateDoc(doc(db, 'tasks', taskId), {
-        completed: !currentStatus
-      });
+      if (editingTask) {
+        // UPDATE: Existing task
+        await updateDoc(doc(db, 'tasks', editingTask.id), {
+          task: task,
+          updatedAt: serverTimestamp()
+        });
+        setEditingTask(null);
+      } else {
+        // CREATE: New task
+        await addDoc(collection(db, 'tasks'), {
+          task: task,
+          completed: false,
+          userId: user.uid,
+          createdAt: serverTimestamp()
+        });
+      }
+      
+      setTask('');
     } catch (error) {
-      console.error('Error updating task:', error);
+      console.error('Error saving task:', error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
-
-  const deleteTask = async (taskId) => {
-    try {
-      await deleteDoc(doc(db, 'tasks', taskId));
-    } catch (error) {
-      console.error('Error deleting task:', error);
-    }
-  };
-
-  if (loading) {
-    return <div className="loading-tasks">Loading tasks...</div>;
-  }
-
-  if (tasks.length === 0) {
-    return <div className="empty-list">No tasks yet. Add some tasks to get started!</div>;
-  }
 
   return (
-    <div className="todo-list">
-      <h2>Your Tasks</h2>
-      <ul>
-        {tasks.map((task) => (
-          <li key={task.id} className={task.completed ? 'completed' : ''}>
-            <div className="task-content">
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => toggleComplete(task.id, task.completed)}
-                id={`task-${task.id}`}
-              />
-              <label htmlFor={`task-${task.id}`}>
-                {task.task}
-              </label>
-            </div>
-            <div className="task-actions">
-              <button 
-                onClick={() => deleteTask(task.id)}
-                className="delete-btn"
-                aria-label="Delete task"
-              >
-                Delete
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+    <div className="todo-form fade-in">
+      <h2 className="section-title">{editingTask ? 'Edit Task' : 'Add New Task'}</h2>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={task}
+          onChange={(e) => setTask(e.target.value)}
+          placeholder="What needs to be done?"
+          disabled={isSubmitting}
+          autoFocus
+        />
+        <button 
+          type="submit" 
+          disabled={isSubmitting || !task.trim()}
+        >
+          {isSubmitting 
+            ? (editingTask ? 'Updating...' : 'Adding...') 
+            : (editingTask ? 'Update Task' : 'Add Task')}
+        </button>
+        {editingTask && (
+          <button 
+            type="button" 
+            onClick={() => {
+              setEditingTask(null);
+              setTask('');
+            }}
+            disabled={isSubmitting}
+            className="cancel-btn"
+          >
+            Cancel
+          </button>
+        )}
+      </form>
     </div>
   );
 }
 
-export default TodoList;
+export default TodoForm;

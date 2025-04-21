@@ -1,16 +1,17 @@
 /* src/styles/TodoList.css */
 .todo-list {
-  background-color: #f8f9fa;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
 .todo-list h2 {
   margin-top: 0;
-  margin-bottom: 15px;
-  font-size: 1.25rem;
-  color: #343a40;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  color: #2c3e50;
+  font-weight: 600;
 }
 
 .todo-list ul {
@@ -24,43 +25,50 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px;
-  margin-bottom: 10px;
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.2s;
+  margin-bottom: 12px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+  border-left: 5px solid #3498db;
 }
 
 .todo-list li:hover {
-  background-color: #f1f3f5;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
 }
 
 .todo-list li.completed {
-  background-color: #e9ecef;
+  background-color: #f1f2f6;
+  border-left-color: #2ecc71;
 }
 
 .task-content {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 15px;
   flex: 1;
 }
 
 .todo-list input[type="checkbox"] {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   cursor: pointer;
+  accent-color: #2ecc71;
 }
 
 .todo-list label {
   margin: 0;
-  transition: text-decoration 0.2s;
+  transition: all 0.2s;
   cursor: pointer;
+  font-size: 1.05rem;
+  color: #34495e;
+  word-break: break-word;
 }
 
 .completed .task-content label {
   text-decoration: line-through;
-  color: #6c757d;
+  color: #7f8c8d;
 }
 
 .task-actions {
@@ -68,35 +76,99 @@
   gap: 10px;
 }
 
-.delete-btn {
-  padding: 8px 12px;
-  background-color: #dc3545;
-  color: white;
+.task-actions button {
+  padding: 8px 15px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
   font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.edit-btn {
+  background-color: #3498db;
+  color: white;
+}
+
+.edit-btn:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+.delete-btn {
+  background-color: #e74c3c;
+  color: white;
 }
 
 .delete-btn:hover {
-  background-color: #c82333;
+  background-color: #c0392b;
+  transform: translateY(-2px);
 }
 
-.loading-tasks,
 .empty-list {
   text-align: center;
-  padding: 20px;
-  color: #6c757d;
+  padding: 30px 20px;
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+.loading-tasks {
+  text-align: center;
+  padding: 30px 20px;
+  color: #7f8c8d;
+  font-size: 1.1rem;
+}
+
+/* Task count summary */
+.task-summary {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #ecf0f1;
+  color: #7f8c8d;
+}
+
+/* Filter options */
+.filter-options {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-btn {
+  padding: 8px 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #e0e6ed;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.filter-btn:hover, .filter-btn.active {
+  background-color: #3498db;
+  color: white;
+  border-color: #3498db;
 }
 
 @media (max-width: 576px) {
+  .todo-list {
+    padding: 20px;
+  }
+  
   .todo-list li {
     flex-direction: column;
     align-items: flex-start;
+    gap: 10px;
   }
   
   .task-actions {
-    margin-top: 10px;
     align-self: flex-end;
+  }
+  
+  .filter-options {
+    flex-wrap: wrap;
   }
 }

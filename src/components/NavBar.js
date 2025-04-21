@@ -1,35 +1,16 @@
-// src/components/NavBar.js
-import React, { useState } from 'react';
+import React from 'react';
+import { useAuth } from '../context/AuthContext';import { signOut } from 'firebase/auth';
 import { auth } from '../firebase';
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import '../styles/Navbar.css';
-
-function NavBar({ user }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isRegistering, setIsRegistering] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleAuth = async (e) => {
-    e.preventDefault();
-    setError('');
-    
-    try {
-      if (isRegistering) {
-        await createUserWithEmailAndPassword(auth, email, password);
-      } else {
-        await signInWithEmailAndPassword(auth, email, password);
-      }
-      setEmail('');
-      setPassword('');
-    } catch (error) {
-      setError(error.message);
-    }
-  };
+import { useNavigate } from 'react-router-dom';
+import '../styles/Navbar.css';  // Correct path from components folder
+function Navbar() {
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      navigate('/login');
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -37,48 +18,22 @@ function NavBar({ user }) {
 
   return (
     <nav className="navbar">
-      <div className="navbar-brand">
-        <h2>TO_DO...</h2>
-      </div>
-      
-      <div className="navbar-auth">
-        {user ? (
-          <div className="user-info">
-            <span>{user.email}</span>
+      <div className="navbar-brand">Todo App</div>
+      <div className="navbar-menu">
+        {currentUser ? (
+          <>
+            <span className="user-email">{currentUser.email}</span>
             <button onClick={handleLogout} className="logout-btn">Logout</button>
-          </div>
+          </>
         ) : (
-          <form onSubmit={handleAuth} className="auth-form">
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button type="submit">
-              {isRegistering ? 'Register' : 'Login'}
-            </button>
-            <button 
-              type="button" 
-              className="toggle-btn"
-              onClick={() => setIsRegistering(!isRegistering)}
-            >
-              {isRegistering ? 'Switch to Login' : 'Switch to Register'}
-            </button>
-            {error && <p className="error-message">{error}</p>}
-          </form>
+          <>
+            <button onClick={() => navigate('/login')} className="auth-btn">Login</button>
+            <button onClick={() => navigate('/register')} className="auth-btn">Register</button>
+          </>
         )}
       </div>
     </nav>
   );
 }
 
-export default NavBar;
+export default Navbar;
